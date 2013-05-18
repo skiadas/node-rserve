@@ -1,0 +1,4 @@
+{ 
+    "name" : "node-rserve",
+    "main" : "node-rserve.js" 
+}

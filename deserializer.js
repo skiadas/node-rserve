@@ -26,7 +26,7 @@ _.extend(Parser.prototype, {
         var results = [], nextObj;
         while (chunk.length > 0) {
             nextObj = this.parseOne(chunk);
-            results.push(nextObj);
+            results.push(nextObj);            
             chunk = chunk.slice(nextObj.length + 4);
         }
         return results; // Reached end of what we were trying to read
@@ -56,7 +56,7 @@ _.extend(Parser.prototype, {
         obj.code = lead & 0x7f;  // Killing the most significant bit
         obj.attr = (lead & 0x80) !== 0; // Reading the most significant bit
         obj.header = buf;   // Store the header in the objects, for troubleshooting
-        if (lead !== 0x52 & lead !== 0x01) {
+        if (lead !== 0x52 & lead !== 0x01 & lead !== 0x02) {
             obj.length = buf.readUInt32LE(0) >> 8; // the remaining 24 numbers are the length
         }
         return obj;
@@ -119,6 +119,7 @@ _.extend(Parser.prototype, {
         if (header.type === 'greeting') {
             return "Greetings! You are talking to RServe through Node!"
         }
+        if (!data) return null;
         var cleanObject = function(obj) {
             // Recursively simplifies its object contents
             var data
@@ -186,7 +187,8 @@ responses = {
 ,   0x22: {type: 'array-string', fun: 'parseArrayString'}
 ,   0x24: {type: 'array-boolean', fun: 'parseArrayBoolean'}
 ,   0x52: {type: 'greeting', fun: 'parseGreeting', length: 28}
-,   0x01: {type: 'header', fun: 'parseHeader', length: 12}
+,   0x01: {type: 'ok_header', fun: 'parseHeader', length: 12}
+,   0x02: {type: 'error_header', fun: 'parseHeader', length: 12}
 }
 
 

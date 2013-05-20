@@ -9,8 +9,8 @@ var _ = require('underscore')
 
 function RClient(server) {
     EventEmitter.call(this);
-    var server = _.extend({server: 'localhost', port: '6311'}, server);
-    console.log("Connecting to: ", server.server + ':' + server.port);
+    var server = _.extend({host: 'localhost', port: '6311'}, server);
+    console.log("Connecting to: ", server.host + ':' + server.port);
     this.client = new net.Socket();
     var client = this.client
     ,   that = this;
@@ -22,8 +22,9 @@ function RClient(server) {
     client.on('end', function() { console.log('Client received "end" from r-server'); });
     client.on('close', function() { console.log('Connection closed'); });
     client.on('error', function(err) { console.log('Encountered error: ', err); });
-    client.connect(server.port, server.server, function() {
         console.log("Connected to:", server.server + ':' + server.port);
+    client.connect(server.port, server.host, function() {
+        console.log("Connected to:", server.host + ':' + server.port);
         return that;
     });
     this.on('send', this.send); // Send request to prototype;

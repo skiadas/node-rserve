@@ -5,7 +5,7 @@ var _ = require('underscore')
 ,   util = require('util')
 ,   EventEmitter = require('events').EventEmitter
 ,   Parser = require('./deserializer.js')
-,   Serializer = require('./serializer.js');
+,   serialize = require('./serializer.js');
 
 function RClient(server) {
     EventEmitter.call(this);
@@ -22,7 +22,6 @@ function RClient(server) {
     client.on('end', function() { console.log('Client received "end" from r-server'); });
     client.on('close', function() { console.log('Connection closed'); });
     client.on('error', function(err) { console.log('Encountered error: ', err); });
-        console.log("Connected to:", server.server + ':' + server.port);
     client.connect(server.port, server.host, function() {
         console.log("Connected to:", server.host + ':' + server.port);
         return that;
@@ -38,7 +37,10 @@ util.inherits(RClient, EventEmitter);
 _.extend(RClient.prototype, {
     send: function(data) {
         console.log("Sending data: ", data);
-        this.client.write(new Serializer(data.method, data.data).read());
+        if (_.isString(data)) {
+            data = {method: 'eval', data: data};
+        };
+        this.client.write(serialize(data.method, data.data));
     }
     , close: function() {
         this.client.end();

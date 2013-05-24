@@ -2,10 +2,10 @@
 var _ = require('underscore');
 serialize = function(method, commandStr) {
     if (_.isUndefined(commandStr)) {
-        commandStr = this.toString();
+        commandStr = method;
+        // Use voidEval when no method specified, and string ends in semicolon
+        method = (commandStr.match(/;(\n|\r)*$/)) ? 'voidEval' : 'eval';
     }
-    // currently the method provided to the function is ignored.
-    method = (commandStr.match(/;(\n|\r)*$/)) ? 'voidEval' : 'eval';
     var strlen = Buffer.byteLength(commandStr);
     strlen += 4 - (strlen % 4); // Ensure it's a multiple of 4, possibly not needed
     var buf = new Buffer(16 + 4 + strlen);

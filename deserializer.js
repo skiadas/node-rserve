@@ -135,18 +135,6 @@ _.extend(Parser.prototype, {
                 break;
             case 'untagged-list':
                 data = _.map(obj.value, cleanObject);
-                if (attrs && attrs.names) {
-                    // The names attribute is used to turn the "array" to a "named list"
-                    var oldData = data
-                    ,   names = attrs.names
-                    ,   length = names.length;
-                    data = {};
-                    for (i=0; i < length;i++) {
-                        // For an unnamed entry mixed with named one, use number as key
-                        data[names[i] || i] = oldData[i];
-                    }
-                    delete attrs.names;
-                }
                 break;
             case 'tagged-list':
                 // This is the complicated one!
